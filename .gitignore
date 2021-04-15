@@ -1,0 +1,3 @@
+# Project exclude paths
+/node_modules/
+/vue-workspace/javalsj-vue/node_modules/
