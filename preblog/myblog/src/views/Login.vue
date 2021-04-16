@@ -62,11 +62,20 @@ export default {
            * url
            */
           this.loading=true;
+         /* this.axios({
+            method:"post",
+            url:"/login",
+            data:this.loginForm
+          }).then(res=>{
+            this.loading=false;
+            console.log(res.data);
+            this.$router.replace('/home');
+          })*/
           this.postRequest('/login', this.loginForm).then(resp => {
-            if (resp) {
+            if (resp!=null) {
               this.loading=false;
               //存放后端传来的token
-              const tokenStr = resp.obj.tokenHead + resp.obj.token;
+              const tokenStr = resp.tokenHead + resp.token;
               window.sessionStorage.setItem("tokenStr", tokenStr);
               this.$router.replace('/home');
             }

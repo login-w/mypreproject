@@ -54,7 +54,7 @@ let base = '';
 export const postRequest = (url, params) => {
   return axios({
     method: 'post',
-    url: '${base}${url}',
+    url: url,
     data: params
   })
 }
@@ -62,7 +62,7 @@ export const postRequest = (url, params) => {
 export const putRequest = (url, params) => {
   return axios({
     method: 'put',
-    url: '${base}${url}',
+    url: url,
     data: params
   })
 }
@@ -70,7 +70,7 @@ export const putRequest = (url, params) => {
 export const getRequest = (url, params) => {
   return axios({
     method: 'get',
-    url: '${base}${url}',
+    url: url,
     data: params
   })
 }
@@ -78,7 +78,7 @@ export const getRequest = (url, params) => {
 export const deleteRequest = (url, params) => {
   return axios({
     method: 'delete',
-    url: '${base}${url}',
+    url: url,
     data: params
   })
 }
