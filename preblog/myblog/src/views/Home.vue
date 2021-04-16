@@ -5,8 +5,8 @@
         <div class="title">高校绩效工作量管理系统</div>
         <el-dropdown class="userInfo">
           <span class="el-dropdown-link">
-          张三
-<!--            <img src="./src/static/1.jpg">-->
+            <span>张三</span>
+            <img src="../static/1.jpg">
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>个人中心</el-dropdown-item>
@@ -46,7 +46,7 @@ export default {
 
 <style scoped>
 .homeHeader {
-  background: #266f98;
+  background: #2b2b2b;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -56,16 +56,27 @@ export default {
 
 .title {
   font-size: 30px;
-  font-family: 楷体;
-  color: #99ff00;
+  font-family: 华文行楷;
+  color: #275788;
 }
-.homeHeader .userInfo{
+
+.homeHeader .userInfo {
   cursor: pointer;
 }
-.el-dropdown-link img{
+
+.el-dropdown-link img {
   width: 48px;
   height: 48px;
   border-radius: 24px;
+}
+
+.el-dropdown-link span {
+
+  padding-right: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: indianred;
+
 }
 
 </style>

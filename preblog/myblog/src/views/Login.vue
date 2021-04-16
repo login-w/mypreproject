@@ -63,11 +63,12 @@ export default {
            */
           this.loading=true;
           this.postRequest('/login', this.loginForm).then(resp => {
-            if (resp!=null) {
+            if (resp) {
               this.loading=false;
               //存放后端传来的token
               const tokenStr = resp.tokenHead + resp.token;
               window.sessionStorage.setItem("tokenStr", tokenStr);
+              //跳转到首页
               this.$router.replace('/home');
             }
           })
