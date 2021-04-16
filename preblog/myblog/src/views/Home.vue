@@ -57,7 +57,7 @@ export default {
 .title {
   font-size: 30px;
   font-family: 楷体;
-  color: #fb00ff;
+  color: #99ff00;
 }
 .homeHeader .userInfo{
   cursor: pointer;
