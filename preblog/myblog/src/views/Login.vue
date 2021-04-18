@@ -66,10 +66,11 @@ export default {
             if (resp) {
               this.loading=false;
               //存放后端传来的token
-              const tokenStr = resp.tokenHead + resp.token;
+              const tokenStr = resp.data.tokenHead + resp.data.token;
               window.sessionStorage.setItem("tokenStr", tokenStr);
-              //跳转到首页
-              this.$router.replace('/home');
+              //页面跳转
+              let path=this.$route.query.redirect;
+              this.$router.replace((path=='/'||path==undefined)?'/home':path);
             }
           })
         } else {

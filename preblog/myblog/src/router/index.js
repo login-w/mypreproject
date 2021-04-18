@@ -12,19 +12,20 @@ const routes = [
   {
     path: '/',
     name: 'Login',
-    component: Login
+    component: Login,
+    hidden: true
   },
   {
     path: '/home',
-    name: 'Home',
+    name: '教学管理',
     component: Home,
     children:[
       {path: '/test1',
-        name: 'Test1',
+        name: '基本信息管理',
         component: Test1
       },
       {path: '/test2',
-        name: 'Test2',
+        name: '学生管理',
         component: Test2
       }
     ]
