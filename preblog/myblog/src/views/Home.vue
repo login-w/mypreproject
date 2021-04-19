@@ -128,7 +128,7 @@ export default {
 
 .el-dropdown-link span {
   font-family: 华文新魏;
-  font-size: 25px;
+  font-size: 20px;
   align-content: center;
   text-align: center;
   color: #11ab99;
