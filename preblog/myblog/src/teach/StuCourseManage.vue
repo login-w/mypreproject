@@ -38,8 +38,8 @@
             v-model="searchObj.acaname">
         </el-input>
       </div>
-      <el-button type="primary" class="searchButton" icon="el-icon-search" size="small" @click="searchMessageMethod">搜索课程</el-button>
-      <el-button type="warning" size="small" class="AddButton" icon="el-icon-circle-plus">添加课程</el-button>
+      <el-button type="primary" class="searchButton" icon="el-icon-search" size="small" @click="searchMessageMethod">搜索教师</el-button>
+      <el-button type="warning" size="small" class="AddButton" icon="el-icon-circle-plus">添加教师</el-button>
     </div>
     <div class="CourseTable">
       <el-table
@@ -58,39 +58,24 @@
             width="55">
         </el-table-column>
         <el-table-column
-            prop="number"
-            label="课程编号"
-            width="70">
-        </el-table-column>
-        <el-table-column
-            prop="name"
+            prop="cname"
             label="课程名称"
-            width="95">
+            width="120">
         </el-table-column>
         <el-table-column
-            prop="capacity"
-            label="课程容量"
-            width="70">
+            prop="sname"
+            label="学生姓名"
+            width="120">
         </el-table-column>
         <el-table-column
-            prop="tid"
-            label="任课教师编号"
-            width="95">
+            prop="sidcard"
+            label="学生学号"
+            width="120">
         </el-table-column>
         <el-table-column
             prop="tname"
-            label="任课教师名称"
-            width="95">
-        </el-table-column>
-        <el-table-column
-            prop="acaid"
-            label="所属学院编号"
-            width="95">
-        </el-table-column>
-        <el-table-column
-            prop="acaname"
-            label="所属学院名称"
-            width="95">
+            label="教师姓名"
+            width="120">
         </el-table-column>
         <!--        操作列-->
         <el-table-column label="操作" class="operateColumn" width="200px">
@@ -125,15 +110,10 @@
 <script>
 
 export default {
-  name: "CourseManage",
+  name: "StuCourseManage",
   data() {
     return {
       searchObj: {
-        id:"",
-        name: "",
-        number: "",
-        tname: "",
-        acaname: ""
       },
       positions: [],
       MyPageInfo: {
@@ -159,6 +139,7 @@ export default {
       this.postRequest("/teach/getCourseByFoggy", this.searchObj).then(resp => {
         if (resp) {
           // alert(resp.data.itemList.number);
+
           this.init(resp.data.itemList,resp.data);
         }
       })
@@ -173,14 +154,14 @@ export default {
 
     },
     handleDelete(index, data) {
-      this.$confirm('此操作将永久删除['+data.name+']课程, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除['+data.tname+']教师, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
         center: true
       }).then(() => {
         // alert(data.id)
-        this.deleteRequest('/teach/course/'+data.id).then(resp=>{
+        this.deleteRequest('/teach/teacher/'+data.id).then(resp=>{
           if (resp){
             this.initPositions();
           }
@@ -193,7 +174,7 @@ export default {
       });
     },
     initPositions() {
-      this.postRequest("/teach/getAllCourse", this.MyPageInfo).then(resp => {
+      this.postRequest("/teach/getAll", this.MyPageInfo).then(resp => {
         if (resp) {
           this.init(resp.data.itemList,resp.data);
         }

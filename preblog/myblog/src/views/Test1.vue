@@ -10,6 +10,9 @@
       <el-tab-pane label="学院管理" name="AcademyManage">
         <AcademyManage></AcademyManage>
       </el-tab-pane>
+      <el-tab-pane label="学生管理" name="StudentManage">
+        <StudentManage></StudentManage>
+      </el-tab-pane>
     </el-tabs>
   </div>
 
@@ -18,9 +21,10 @@
 import CourseManage from "@/teach/CourseManage";
 import TeacherManage from "@/teach/TeacherManage";
 import AcademyManage from "@/teach/AcademyManage";
+import StudentManage from "@/teach/StudentManage";
 export default {
   name: "基本信息管理",
-  components: {AcademyManage, TeacherManage, CourseManage},
+  components: {AcademyManage, TeacherManage, CourseManage,StudentManage},
   data() {
     return{
       activeName:"CourseManage"
@@ -29,7 +33,8 @@ export default {
   comments:{
     CourseManage,
     TeacherManage,
-    AcademyManage
+    AcademyManage,
+    StudentManage
   }
 }
 </script>

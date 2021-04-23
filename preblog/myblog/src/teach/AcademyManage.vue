@@ -68,7 +68,7 @@
             width="120">
         </el-table-column>
         <!--        操作列-->
-        <el-table-column label="操作" class="operateColumn">
+        <el-table-column label="操作" class="operateColumn" width="200px">
           <template #default="scope">
             <el-button
                 icon="el-icon-edit"

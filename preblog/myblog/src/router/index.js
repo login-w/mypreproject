@@ -5,6 +5,8 @@ import Home from '../views/Home'
 import * as path from "path";
 import Test1 from "../views/Test1";
 import Test2 from "../views/Test2";
+import scientific from "@/views/scientific";
+import stuProject from "@/views/stuProject";
 
 Vue.use(VueRouter)
 
@@ -25,8 +27,23 @@ const routes = [
         component: Test1
       },
       {path: '/test2',
-        name: '学生管理',
+        name: '选课信息',
         component: Test2
+      }
+    ]
+  },
+  {
+    path: '/home',
+    name: '科研管理',
+    component: Home,
+    children:[
+      {path: '/scientific',
+        name: '科研管理基本信息',
+        component: scientific
+      },
+      {path: '/stuProject',
+        name: '项目选取管理',
+        component: stuProject
       }
     ]
   }

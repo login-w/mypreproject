@@ -58,38 +58,38 @@
             width="55">
         </el-table-column>
         <el-table-column
-            prop="number"
-            label="课程编号"
-            width="70">
-        </el-table-column>
-        <el-table-column
             prop="name"
-            label="课程名称"
+            label="学生姓名"
             width="95">
         </el-table-column>
         <el-table-column
-            prop="capacity"
-            label="课程容量"
+            prop="birth"
+            label="生日"
+            width="120">
+        </el-table-column>
+        <el-table-column
+            prop="sex"
+            label="性别"
             width="70">
-        </el-table-column>
-        <el-table-column
-            prop="tid"
-            label="任课教师编号"
-            width="95">
-        </el-table-column>
-        <el-table-column
-            prop="tname"
-            label="任课教师名称"
-            width="95">
         </el-table-column>
         <el-table-column
             prop="acaid"
-            label="所属学院编号"
+            label="所属学院id"
+            width="90">
+        </el-table-column>
+        <el-table-column
+            prop="specialid"
+            label="专业"
+            width="70">
+        </el-table-column>
+        <el-table-column
+            prop="addr"
+            label="住址"
             width="95">
         </el-table-column>
         <el-table-column
-            prop="acaname"
-            label="所属学院名称"
+            prop="tid"
+            label="导师"
             width="95">
         </el-table-column>
         <!--        操作列-->
@@ -125,7 +125,7 @@
 <script>
 
 export default {
-  name: "CourseManage",
+  name: "StudentManage",
   data() {
     return {
       searchObj: {
@@ -156,7 +156,7 @@ export default {
   },
   methods: {
     searchMessageMethod() {
-      this.postRequest("/teach/getCourseByFoggy", this.searchObj).then(resp => {
+      this.postRequest("/teach/getStudentByFoggy", this.searchObj).then(resp => {
         if (resp) {
           // alert(resp.data.itemList.number);
           this.init(resp.data.itemList,resp.data);
@@ -173,14 +173,14 @@ export default {
 
     },
     handleDelete(index, data) {
-      this.$confirm('此操作将永久删除['+data.name+']课程, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除['+data.name+']学生, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
         center: true
       }).then(() => {
         // alert(data.id)
-        this.deleteRequest('/teach/course/'+data.id).then(resp=>{
+        this.deleteRequest('/teach/student/'+data.id).then(resp=>{
           if (resp){
             this.initPositions();
           }
@@ -193,7 +193,7 @@ export default {
       });
     },
     initPositions() {
-      this.postRequest("/teach/getAllCourse", this.MyPageInfo).then(resp => {
+      this.postRequest("/teach/getAllStudent", this.MyPageInfo).then(resp => {
         if (resp) {
           this.init(resp.data.itemList,resp.data);
         }
