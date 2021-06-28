@@ -1,16 +1,16 @@
 <template>
   <div>
-    <el-tabs type="border-card" v-model="activeName">
+    <el-tabs type="border-card" ref="tabs" v-model="activeName">
       <el-tab-pane label="课程管理" name="CourseManage">
         <CourseManage></CourseManage>
       </el-tab-pane>
-      <el-tab-pane label="教师管理" name="TeacherManage">
+      <el-tab-pane  label="教师管理"  v-if="displayTeacher" name="TeacherManage">
         <TeacherManage></TeacherManage>
       </el-tab-pane>
-      <el-tab-pane label="学院管理" name="AcademyManage">
+      <el-tab-pane label="学院管理" v-if="displayAcademy" name="AcademyManage">
         <AcademyManage></AcademyManage>
       </el-tab-pane>
-      <el-tab-pane label="学生管理" name="StudentManage">
+      <el-tab-pane label="学生管理" v-if="displayStudent" name="StudentManage">
         <StudentManage></StudentManage>
       </el-tab-pane>
     </el-tabs>
@@ -27,7 +27,22 @@ export default {
   components: {AcademyManage, TeacherManage, CourseManage,StudentManage},
   data() {
     return{
-      activeName:"CourseManage"
+      activeName:"CourseManage",
+      displayTeacher:true,
+      displayAcademy:true,
+      displayStudent:true,
+      user:{}
+    }
+  },
+  mounted() {
+    this.user= window.localStorage.getItem('user');
+    this.user=JSON.parse(this.user);
+    if (this.user.sid!=null){
+      this.displayTeacher=false;
+      this.displayAcademy=false;
+    }else if(this.user.tid!=null){
+      this.displayAcademy=false;
+      this.displayTeacher=false;
     }
   },
   comments:{

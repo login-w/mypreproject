@@ -5,8 +5,9 @@
         <div class="title">高校绩效工作量管理系统</div>
         <el-dropdown class="userInfo" @command="commandHandler">
           <span class="el-dropdown-link">
-            <span class="drop-text">{{user.name}}</span>
-            <img src="../static/1.jpg">
+            <span class="drop-text">{{userInfo.name}}</span>
+<!--            <img src="../static/1.jpg">-->
+            <img :src="userInfo.img">
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="userinfo">个人中心</el-dropdown-item>
@@ -18,21 +19,43 @@
       <el-container>
         <el-aside width="200px">
           <el-menu router
+                   unique-opened
                    background-color="#545c64"
                    text-color="#fff"
                    active-text-color="#ffd04b">
-            <el-submenu index="1" v-for="(item,index) in this .$router.options.routes"
-                        :key="index" v-if="!item.hidden">
-              <template slot="title">
-                <i class="el-icon-s-custom"></i>
-                <span>{{item.name}}</span>
-              </template>
-              <el-menu-item :index="children.path"
-                            v-for="(children,indexj) in item.children">
-                <span>{{children.name}}</span>
+            <div v-if="achievementDisplay">
+              <el-submenu :index="index+''" v-for="(item,index) in this .$router.options.routes"
+                          :key="index" v-if="item.path!='/'">
+                <template slot="title">
+                  <i :class="item.icon" style="color: aquamarine"></i>
+                  <span style="color: #f4f4f4">{{item.name}}</span>
+                </template>
+                <el-menu-item :index="children.path"
+                              v-if="!children.hidden"
+                              v-for="(children,indexj) in item.children">
+                  <i :class="children.icon" style="color: aquamarine"></i>
+                  <span style="color: #f4f4f4">{{children.name}}</span>
 
-              </el-menu-item>
-            </el-submenu>
+                </el-menu-item>
+              </el-submenu>
+            </div>
+            <div v-if="achievementNoDisplay">
+              <el-submenu :index="index+''" v-for="(item,index) in this .$router.options.routes"
+                          :key="index" v-if="item.path!='/'&& item.path!='/3'">
+                <template slot="title">
+                  <i :class="item.icon" style="color: aquamarine"></i>
+                  <span style="color: #f4f4f4">{{item.name}}</span>
+                </template>
+                <el-menu-item :index="children.path"
+                              v-if="!children.hidden"
+                              v-for="(children,indexj) in item.children">
+                  <i :class="children.icon" style="color: aquamarine"></i>
+                  <span style="color: #f4f4f4">{{children.name}}</span>
+
+                </el-menu-item>
+              </el-submenu>
+            </div>
+
           </el-menu>
         </el-aside>
         <el-main>
@@ -57,10 +80,54 @@ export default {
   name: "Home",
   data(){
     return{
-      user:JSON.parse(window.sessionStorage.getItem('user'))
+      user:"",
+      test1:"",
+      achievementDisplay:"",
+      achievementNoDisplay:"",
+      userInfo:{
+        name:"",
+        img:""
+      }
     }
   },
+  mounted() {
+    this.test1=this.$router.currentRoute.path!='/home'
+    this.initPositions();
+  },
   methods: {
+    initUser(){
+      this.user=null;
+    },
+    initUserInfo(){
+      this.name=null;
+      this.userInfo=null;
+    },
+    initPositions(){
+      this.initUser();
+      this.initUserInfo();
+      this.user=JSON.parse(window.localStorage.getItem("user"));
+
+
+      if(this.user.mid!=null){
+        this.userInfo=this.user.managerInfo;
+        this.userInfo.img=this.user.img;
+        this.achievementNoDisplay=false;
+        this.achievementDisplay=true;
+      }
+      if(this.user.sid!=null){
+        this.userInfo=this.user.student;
+        this.userInfo.img=this.user.img;
+        this.achievementNoDisplay=true;
+        this.achievementDisplay=false;
+      }
+      if(this.user.tid!=null){
+        this.userInfo=this.user.teacher;
+        this.userInfo.img=this.user.img;
+        this.userInfo.name=this.user.teacher.tname;
+        this.achievementNoDisplay=false;
+        this.achievementDisplay=true;
+      }
+    },
     menuClick(index) {
       this.$router.push(index);
     },
@@ -72,8 +139,8 @@ export default {
           type: 'warning'
         }).then(() => {
           //清空用户信息
-          window.sessionStorage.removeItem("tokenStr");
-          window.sessionStorage.removeItem("user");
+          window.localStorage.removeItem("tokenStr");
+          window.localStorage.removeItem("user");
           this.$router.replace('/');
         }).catch(() => {
           this.$message({
@@ -113,7 +180,7 @@ export default {
 .title {
   font-size: 30px;
   font-family: 华文行楷;
-  color: #278842;
+  color: #989ea4;
 }
 
 .homeHeader .userInfo {

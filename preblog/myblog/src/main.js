@@ -25,13 +25,13 @@ Vue.prototype.putRequest=putRequest;
 Vue.prototype.deleteRequest=deleteRequest;
 
 router.beforeEach((to,from,next)=>{
-  if (window.sessionStorage.getItem('tokenStr')){
-    if (!window.sessionStorage.getItem('user')){
+  if (window.localStorage.getItem('tokenStr')){
+    if (!window.localStorage.getItem('user')){
       //判断用户信息是否存在
       return getRequest('/admin/info').then(resp=>{
         if (resp){
           //存入用户信息
-          window.sessionStorage.setItem('user',JSON.stringify(resp));
+          window.localStorage.setItem('user',JSON.stringify(resp));
           next();
         }
       })

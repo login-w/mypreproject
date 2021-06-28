@@ -1,62 +1,70 @@
 <template>
   <div>
     <div>
-      <div >
-
-      </div>
       <div class="input-search1">
         <el-input
             size="small"
             class="input-search"
-            placeholder="请输入课程名称"
+            placeholder="根据课程名称查询"
             prefix-icon="el-icon-search"
-            @keydown.enter.native="searchMessageMethod"
-            v-model="searchObj.name">
+            style="width: 180px"
+            clearable
+            @clear="initPositions"
+            @keydown.enter.native="initPositions"
+            v-model="stuCourseSearch.cname">
         </el-input>
         <el-input
             size="small"
             class="input-search"
-            placeholder="请输入课程的编号信息"
+            placeholder="根据学生名字查询"
+            style="width: 180px"
+            clearable
+            @clear="initPositions"
             prefix-icon="el-icon-search"
-            @keydown.enter.native="searchMessageMethod"
-            v-model="searchObj.number">
+            @keydown.enter.native="initPositions"
+            v-model="stuCourseSearch.sname">
         </el-input>
         <el-input
             size="small"
             class="input-search"
-            placeholder="请输入任课教师"
+            placeholder="根据任课教师查询"
+            style="width: 180px"
             prefix-icon="el-icon-search"
-            @keydown.enter.native="searchMessageMethod"
-            v-model="searchObj.tname">
-        </el-input>
-        <el-input
-            size="small"
-            class="input-search"
-            placeholder="请输入学院信息"
-            prefix-icon="el-icon-search"
-            @keydown.enter.native="searchMessageMethod"
-            v-model="searchObj.acaname">
+            clearable
+            @clear="initPositions"
+            @keydown.enter.native="initPositions"
+            v-model="stuCourseSearch.tname">
         </el-input>
       </div>
-      <el-button type="primary" class="searchButton" icon="el-icon-search" size="small" @click="searchMessageMethod">搜索教师</el-button>
-      <el-button type="warning" size="small" class="AddButton" icon="el-icon-circle-plus">添加教师</el-button>
+      <el-button type="primary"
+                 class="searchButton"
+                 icon="el-icon-search" s
+                 ize="small" @click="initPositions">
+        查询学生选课信息
+      </el-button>
     </div>
     <div class="CourseTable">
       <el-table
+          @selection-change="handleSelectionChange"
           size="small"
           :data="positions"
           stripe
           border
           style="width: 100%">
+<!--        <el-table-column-->
+<!--            type="selection"-->
+<!--            width="55">-->
+<!--        </el-table-column>-->
         <el-table-column
-            type="selection"
-            width="55">
+            type="index"
+            label="序号"
+            width="50">
         </el-table-column>
-        <el-table-column
-            prop="id"
-            label="编号"
-            width="55">
-        </el-table-column>
+<!--        <el-table-column-->
+<!--            prop="id"-->
+<!--            label="数据编号"-->
+<!--            width="85">-->
+<!--        </el-table-column>-->
         <el-table-column
             prop="cname"
             label="课程名称"
@@ -81,27 +89,26 @@
         <el-table-column label="操作" class="operateColumn" width="200px">
           <template #default="scope">
             <el-button
-                icon="el-icon-edit"
-                size="mini"
-                type="success"
-                @click="handleEdit(scope.$index, scope.row)">编辑
-            </el-button>
-            <el-button
                 icon="el-icon-delete"
                 size="mini"
                 type="danger"
-                @click="handleDelete(scope.$index, scope.row)">删除
+                @click="handleDelete(scope.$index, scope.row)">退课
             </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+
     <!--    分页-->
-    <div class="CoursePage">
+    <div style="display: flex;justify-content: flex-end">
       <el-pagination
           background
-          layout="prev, pager, next"
-          :total="MyPageInfo.totalPages">
+          @current-change="currentChange"
+          :page-sizes="number"
+          @size-change="sizeChange"
+          layout="sizes,prev,pager,next,jumper,->,total"
+          page-size="5"
+          :total="this.pageInfo.total">
       </el-pagination>
     </div>
   </div>
@@ -113,56 +120,68 @@ export default {
   name: "StuCourseManage",
   data() {
     return {
-      searchObj: {
+      editVisible: '',   //显示、隐藏
+      deleteVisible:"",
+      addVisible:"",
+      selectVisible:"",
+      user:{
+        sid:null,
+        tid:null,
+        mid:null
+      },
+      userInfo:{},
+      multipleSelection: [],
+      stuCourseSearch: {
+        number: null,
+        sname: "",
+        tname: "",
+        cname: ""
       },
       positions: [],
-      MyPageInfo: {
-        //开始页
+      number: [5, 10, 20],
+      pageInfo: {
+        total: 0,
         startPage: 1,
-        //每页展示的条数
-        size: 5,
-        //总页数
-        totalPages: "",
-        //当前页
-        curSize: "",
-        //总的数据数
-        totalItems: ""
+        size: 5
       }
     }
   },
 
   mounted() {
+    this.initUser();
+    this.initUserInfo();
     this.initPositions();
   },
   methods: {
-    searchMessageMethod() {
-      this.postRequest("/teach/getCourseByFoggy", this.searchObj).then(resp => {
-        if (resp) {
-          // alert(resp.data.itemList.number);
-
-          this.init(resp.data.itemList,resp.data);
-        }
-      })
+    initUser(){
+      this.user=null;
     },
-    initSearchObj(obj){
-      this.searchObj.acaname=obj;
-      this.searchObj.name=obj;
-      this.searchObj.number=obj;
-      this.searchObj.tname=obj;
+    initUserInfo(){
+      this.userInfo=null;
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    sizeChange(size) {
+      this.pageInfo.size = size;
+      this.initPositions();
+    },
+    currentChange(currentPage) {
+      this.pageInfo.startPage = currentPage;
+      this.initPositions();
     },
     handleEdit(index, data) {
 
     },
     handleDelete(index, data) {
-      this.$confirm('此操作将永久删除['+data.tname+']教师, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除[' + data.tname + ']课程, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
         center: true
       }).then(() => {
-        // alert(data.id)
-        this.deleteRequest('/teach/teacher/'+data.id).then(resp=>{
-          if (resp){
+        this.deleteRequest('/teach/deleteStuCourse/' + data.id).then(resp => {
+          if (resp) {
             this.initPositions();
           }
         })
@@ -174,25 +193,64 @@ export default {
       });
     },
     initPositions() {
-      this.postRequest("/teach/getAll", this.MyPageInfo).then(resp => {
-        if (resp) {
-          this.init(resp.data.itemList,resp.data);
+      this.user= window.localStorage.getItem('user');
+      this.user=JSON.parse(this.user);
+      if (this.user.mid!=null){
+        this.userInfo=this.user.managerInfo;
+      }
+      // alert(JSON.stringify(this.user));
+      if (this.user.authority!=1){
+        this.editVisible='none';
+        this.addVisible='none';
+        this.deleteVisible='none';
+      }
+      if (this.user.sid==null){
+        if (this.user.tid!=null){
+          this.getRequest('/teach/getAll?startPage=' + this.pageInfo.startPage
+              + '&size=' + this.pageInfo.size + '&cname=' + this.stuCourseSearch.cname
+              + '&sname=' + this.stuCourseSearch.sname
+              + '&tname=' + this.stuCourseSearch.tname+'&tid='+this.user.tid).then(resp => {
+            if (resp) {
+              this.positions = resp.data.data;
+              this.pageInfo.total = resp.data.total;
+            }
+          })
+        }else{
+          this.getRequest('/teach/getAll?startPage=' + this.pageInfo.startPage
+              + '&size=' + this.pageInfo.size + '&cname=' + this.stuCourseSearch.cname
+              + '&sname=' + this.stuCourseSearch.sname
+              + '&tname=' + this.stuCourseSearch.tname).then(resp => {
+            if (resp) {
+              this.positions = resp.data.data;
+              this.pageInfo.total = resp.data.total;
+            }
+          })
         }
-      })
-    },
-    init(obj1,obj2){
-      this.positions=obj1;
-      this.MyPageInfo=obj2;
+
+      }else{
+        this.getRequest('/teach/getAll?startPage=' + this.pageInfo.startPage
+            + '&size=' + this.pageInfo.size + '&cname=' + this.stuCourseSearch.cname
+            + '&sname=' + this.stuCourseSearch.sname
+            + '&tname=' + this.stuCourseSearch.tname
+            +'&sid='+this.user.sid).then(resp => {
+          if (resp) {
+            this.positions = resp.data.data;
+            this.pageInfo.total = resp.data.total;
+          }
+        })
+      }
+
     }
   }
 }
 </script>
 
 <style scoped>
-.input-search1{
+.input-search1 {
   margin-bottom: 5px;
   margin-top: 5px;
 }
+
 .searchButton {
   /*padding-right: 10px;*/
   margin-left: 6cm;

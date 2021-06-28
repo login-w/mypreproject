@@ -18,14 +18,17 @@
       </el-form-item>
 
       <el-form-item prop="code">
-        <el-input type="text" auto-complete="false" v-model="loginForm.code"
-                  placeholder="点击图片更换验证码" style="width: 250px;margin-right: 5px">
-
+        <el-input type="text"
+                  auto-complete="false"
+                  v-model="loginForm.code"
+                  placeholder="点击图片更换验证码"
+                  @keydown.enter.native="loginClick"
+                  style="width: 250px;margin-right: 5px">
         </el-input>
-        <img :src="picture" @click="updatePicture">
+        <img :src="picture"  @click="updatePicture">
       </el-form-item>
       <el-checkbox v-model="checked" class="remember">记住我</el-checkbox>
-      <el-button type="primary" style="width: 100%" @click="loginClick">登录</el-button>
+      <el-button type="primary" style="width: 100%"   @click="loginClick">登录</el-button>
     </el-form>
   </div>
 </template>
@@ -63,11 +66,12 @@ export default {
            */
           this.loading=true;
           this.postRequest('/login', this.loginForm).then(resp => {
+            this.loading=false;
+            this.updatePicture();
             if (resp) {
-              this.loading=false;
               //存放后端传来的token
               const tokenStr = resp.data.tokenHead + resp.data.token;
-              window.sessionStorage.setItem("tokenStr", tokenStr);
+              window.localStorage.setItem("tokenStr", tokenStr);
               //页面跳转
               let path=this.$route.query.redirect;
               this.$router.replace((path=='/'||path==undefined)?'/home':path);

@@ -1,5 +1,7 @@
 <template>
-<StuProject></StuProject>
+  <el-tabs type="border-card" v-model="activeName">
+    <StuProject></StuProject>
+  </el-tabs>
 </template>
 
 <script>

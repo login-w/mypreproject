@@ -1,40 +1,13 @@
 <template>
   <div>
-    <div>
-      <div >
 
-      </div>
-      <div class="input-search1">
-        <el-input
-            size="small"
-            class="input-search"
-            placeholder="根据项目名称查询"
-            prefix-icon="el-icon-search"
-            clearable
-            @clear="initPositions"
-            @keydown.enter.native="initPositions"
-            v-model="stuProjectSearch.pname">
-        </el-input>
-        <el-input
-            size="small"
-            class="input-search"
-            placeholder="根据学生名字查询"
-            prefix-icon="el-icon-search"
-            clearable
-            @clear="initPositions"
-            @keydown.enter.native="initPositions"
-            v-model="stuProjectSearch.sname">
-        </el-input>
-      </div>
-      <el-button type="primary" class="searchButton" icon="el-icon-search" size="small" @click="initPositions">查询学生选项目信息</el-button>
-    </div>
+    <!--    表格数据-->
     <div class="CourseTable">
       <el-table
           size="small"
           :data="positions"
           stripe
           border
-          :row-class-name="tableRowClassName"
           style="width: 100%">
         <el-table-column
             type="selection"
@@ -51,35 +24,40 @@
 <!--            width="85">-->
 <!--        </el-table-column>-->
         <el-table-column
-            prop="pname"
-            label="项目名称"
+            prop="rewardName"
+            label="奖惩名称"
             width="120">
+        </el-table-column>
+
+        <el-table-column
+            prop="bouns"
+            label="奖惩金额"
+            width="80">
         </el-table-column>
         <el-table-column
             prop="sname"
-            label="学生名称"
-            width="90">
+            label="学生名字"
+            width="80">
         </el-table-column>
         <el-table-column
-            prop="exam"
-            label="审核状态"
+            prop="status"
+            label="申请状态"
             width="80">
         </el-table-column>
         <el-table-column
             prop="applytime"
-            label="申请时间"
             :formatter="carTimeFilter"
-            width="95">
+            label="申请时间"
+            width="100">
         </el-table-column>
         <el-table-column
             prop="passtime"
-            label="通过时间"
             :formatter="carTimeFilter"
-            width="95">
+            label="通过时间"
+            width="100">
         </el-table-column>
-
         <!--        操作列-->
-        <el-table-column label="操作" class="operateColumn" width="200px">
+        <el-table-column label="操作" class="operateColumn" width="280px">
           <template #default="scope">
             <el-button
                 icon="el-icon-edit"
@@ -100,18 +78,17 @@
     </div>
     <!--    添加、修改弹出框-->
     <el-dialog
-        title="学生选项目管理"
+        title="学生选奖惩管理"
         :visible.sync="dialogVisible"
         width="60%">
       <div>
-        <el-form ref="projectForm" :model="stuProject">
+        <el-form ref="projectForm" :model="personReward">
           <el-row>
             <el-col :span="24">
-              <el-form-item label="审核状态" prop="exam">
-                <el-select v-model="stuProject.exam" size="small" style="width: 180px"
-                           placeholder="请选择审核状态">
+              <el-form-item label="审核状态" prop="status">
+                <el-select v-model="personReward.status" size="small" style="width: 180px" placeholder="请选择审核状态">
                   <el-option
-                      v-for="item in exams"
+                      v-for="item in status"
                       :key="item.value"
                       :label="item.label"
                       :value="item.value">
@@ -133,7 +110,7 @@
     </span>
     </el-dialog>
     <!--    分页-->
-    <div style="display: flex;justify-content: flex-end" >
+    <div style="display: flex;justify-content: flex-end">
       <el-pagination
           background
           @current-change="currentChange"
@@ -153,7 +130,7 @@ import moment from "moment";
 import {Message} from "element-ui";
 
 export default {
-  name: "StuProject",
+  name: "PersonRewardManage",
   data() {
     return {
       editVisible: '',   //显示、隐藏
@@ -162,16 +139,10 @@ export default {
       selectVisible:"",
       user:{},
       userInfo:{},
-      dialogVisible:false,
-      stuProject:{
-        id:"",
-        pid:"",
-        sid:"",
-        exam:"",
-        applytime: "",
-        passtime:""
+      rewardSearch: {
+        name: ""
       },
-      exams:[
+      status:[
         {
           value: '审核中',
           label: '审核中'
@@ -185,17 +156,18 @@ export default {
           label: '驳回'
         }
       ],
-      stuProjectSearch: {
-        pname:"",
-        sname:""
-      },
       positions: [],
-      number:[5,10,20],
-      pageInfo:{
-        total:0,
-        startPage:1,
-        size:5
-      }
+      number: [5, 10, 20],
+      pageInfo: {
+        total: 0,
+        startPage: 1,
+        size: 5
+      },
+      personReward:{
+        id:"",
+        status:""
+      },
+      dialogVisible :false
     }
   },
 
@@ -203,47 +175,45 @@ export default {
     this.initPositions();
   },
   methods: {
-    tableRowClassName({row, rowIndex}) {
-      if (rowIndex === 1) {
-        return 'warning-row';
-      } else if (rowIndex === 3) {
-        return 'success-row';
-      }
-      return '';
-    },
     doUpdate(){
-      this.putRequest("/scientific/updateStuProject", this.stuProject).then(resp => {
+      this.putRequest("/reward/updateStudentReward", this.personReward).then(resp => {
         if (resp) {
           this.initPositions();
           this.dialogVisible = false;
         }
       })
     },
-    sizeChange(size){
-      this.pageInfo.size=size;
+    carTimeFilter(row, column, cellValue, index) {
+      const daterc = row[column.property]
+      if (daterc != null) {
+        return moment(daterc).format("YYYY-MM-DD")
+      }
+    },
+    sizeChange(size) {
+      this.pageInfo.size = size;
       this.initPositions();
     },
-    currentChange(currentPage){
-      this.pageInfo.startPage=currentPage;
+    currentChange(currentPage) {
+      this.pageInfo.startPage = currentPage;
       this.initPositions();
     },
     handleEdit(index, data) {
-      Object.assign(this.stuProject, data);
+      Object.assign(this.personReward, data);
       this.dialogVisible = true;
     },
     handleDelete(index, data) {
       if (this.user.mid==null&&data.passtime!=null){
-        Message.error({message: '申请成功的项目不可退选哦~'});
+        Message.error({message: '审核通过的奖惩不能退选哦~'});
       }else{
-        this.$confirm('此操作将退选['+data.pname+']项目, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除[' + data.rewardName + ']奖惩信息, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
           center: true
         }).then(() => {
           // alert(data.id)
-          this.deleteRequest('/scientific/deleteStuProject/'+data.id).then(resp=>{
-            if (resp){
+          this.deleteRequest('/reward/deleteStudentReward/' + data.id).then(resp => {
+            if (resp) {
               this.initPositions();
             }
           })
@@ -269,52 +239,37 @@ export default {
         this.deleteVisible='none';
       }
       if (this.user.sid!=null){
-        this.getRequest('/scientific/getAllStuProject?startPage='
-            +this.pageInfo.startPage+'&size='+this.pageInfo.size
-            +'&pname='+this.stuProjectSearch.pname
-            +'&sname='+this.stuProjectSearch.sname
-            +'&sid='+this.user.sid).then(resp => {
+        this.getRequest('/reward/getAllStudentReward?startPage=' + this.pageInfo.startPage
+            + '&size=' + this.pageInfo.size
+            +'&sid='+this.user.sid
+        ).then(resp => {
           if (resp) {
-            this.positions=resp.data.data;
-            this.pageInfo.total=resp.data.total;
+            this.positions = resp.data.data;
+            this.pageInfo.total = resp.data.total;
           }
         })
       }else{
-        this.getRequest('/scientific/getAllStuProject?startPage='
-            +this.pageInfo.startPage+'&size='+this.pageInfo.size
-            +'&pname='+this.stuProjectSearch.pname
-            +'&sname='+this.stuProjectSearch.sname).then(resp => {
+        this.getRequest('/reward/getAllStudentReward?startPage='
+            + this.pageInfo.startPage + '&size=' + this.pageInfo.size
+        ).then(resp => {
           if (resp) {
-            this.positions=resp.data.data;
-            this.pageInfo.total=resp.data.total;
+            this.positions = resp.data.data;
+            this.pageInfo.total = resp.data.total;
           }
         })
       }
 
-    },
-    carTimeFilter(row, column, cellValue, index) {
-      const daterc = row[column.property]
-      if (daterc != null) {
-        return moment(daterc).format("YYYY-MM-DD")
-      }
     }
   }
 }
 </script>
 
 <style scoped>
-.el-table .warning-row {
-  background: #fdf5e6;
-}
-
-.el-table .success-row {
-  background: #f0f9eb;
-}
-
-.input-search1{
+.input-search1 {
   margin-bottom: 5px;
   margin-top: 5px;
 }
+
 .searchButton {
   /*padding-right: 10px;*/
   margin-left: 6cm;

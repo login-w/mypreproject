@@ -6,8 +6,8 @@ import router from "../router";
 //请求
 axios.interceptors.request.use(config => {
   //如果token存在，请求携带这个token
-  if (window.sessionStorage.getItem('tokenStr')) {
-    config.headers['Authorization'] = window.sessionStorage.getItem("tokenStr");
+  if (window.localStorage.getItem('tokenStr')) {
+    config.headers['Authorization'] = window.localStorage.getItem("tokenStr");
   }
   return config;
 }, error => {

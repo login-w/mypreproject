@@ -1,5 +1,7 @@
 <template>
-  <ProjectManage></ProjectManage>
+  <el-tabs type="border-card" v-model="activeName">
+    <ProjectManage></ProjectManage>
+  </el-tabs>
 </template>
 
 <script>
